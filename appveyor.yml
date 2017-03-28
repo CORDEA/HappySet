@@ -1,0 +1,13 @@
+version: 1.0.{build}
+
+before_build:
+    - nuget restore HappySet.sln
+
+build:
+    project: HappySet.sln
+    verbosity: minimal
+
+after_test:
+    - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[*]*" -target:".\packages\NUnit.ConsoleRunner.3.6.1\tools\nunit3-console.exe" -targetargs:"/domain:single .\HappySet.Test\bin\Debug\HappySet.Test.dll" -output:report.xml
+    - npm install codecov --save-dev
+    - ./node_modules/.bin/codecov -f "report.xml"
